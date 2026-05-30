@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050508;
+  --color-surface: #0a0a0f;
+  --color-surface-2: #0f0f1a;
+  --color-border: rgba(255,255,255,0.06);
+  --color-neon: #00f5ff;
+  --color-neon-purple: #7c3aed;
+  --color-neon-green: #00ff88;
+  --color-gold: #ffd700;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { background: #050508; color: #fff; font-family: var(--font-sans); }
+
+.glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.glow-neon { box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+.glow-purple { box-shadow: 0 0 20px rgba(124,58,237,0.4); }
+.glow-green { box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+
+.gradient-text {
+  background: linear-gradient(135deg, #00f5ff, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }

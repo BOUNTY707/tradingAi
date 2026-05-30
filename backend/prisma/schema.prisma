@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum PlanType {
+  FREE
+  STARTER
+  PRO
+  ELITE
+}
+
+enum SignalDirection {
+  BUY
+  SELL
+  WAIT
+}
+
+enum MarketType {
+  CRYPTO
+  FOREX
+  STOCKS
+  METALS
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  TRIAL
+}
+
+model User {
+  id                String         @id @default(uuid())
+  email             String         @unique
+  password          String?
+  firstName         String
+  lastName          String
+  avatar            String?
+  role              Role           @default(USER)
+  isApproved        Boolean        @default(false)
+  emailVerified     Boolean        @default(false)
+  emailVerifyToken  String?
+  resetPasswordToken String?
+  resetPasswordExp  DateTime?
+  googleId          String?        @unique
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  lastLoginAt       DateTime?
+
+  subscription      Subscription?
+  analyses          AIAnalysis[]
+  notifications     Notification[]
+  watchlist         WatchlistItem[]
+  tradingHistory    TradingHistory[]
+  payments          Payment[]
+  adminLogs         AdminLog[]      @relation("AdminLogs")
+  paymentRequests   PaymentRequest[]
+
+  @@map("users")
+}
+
+model PaymentRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  planName    String
+  amount      Int
+  method      String
+  screenshot  String   // base64
+  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_requests")
+}
+
+model Plan {
+  id            String       @id @default(uuid())
+  name          String
+  type          PlanType
+  priceMonthly  Float
+  durationMonths Int
+  features      Json
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id          String             @id @default(uuid())
+  userId      String             @unique
+  planId      String
+  status      SubscriptionStatus @default(TRIAL)
+  startDate   DateTime           @default(now())
+  endDate     DateTime
+  autoRenew   Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        Plan               @relation(fields: [planId], references: [id])
+
+  @@map("subscriptions")
+}
+
+model TradingSignal {
+  id            String          @id @default(uuid())
+  symbol        String
+  market        MarketType
+  direction     SignalDirection
+  confidence    Float
+  entryMin      Float
+  entryMax      Float
+  stopLoss      Float
+  takeProfit1   Float
+  takeProfit2   Float?
+  timeframe     String
+  tradeType     String
+  smcConcept    String
+  trend         String
+  riskLevel     String
+  sentiment     String
+  riskReward    String?
+  concepts      Json?
+  explanation   String?
+  currentPrice  Float?
+  isActive      Boolean         @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@map("trading_signals")
+}
+
+model AIAnalysis {
+  id            String          @id @default(uuid())
+  userId        String
+  symbol        String
+  market        MarketType
+  direction     SignalDirection
+  confidence    Float
+  timeframe     String
+  strategy      String
+  entry         String
+  stopLoss      String
+  takeProfit1   String
+  takeProfit2   String?
+  trend         String
+  riskLevel     String
+  sentiment     String
+  riskReward    String
+  concepts      Json
+  explanation   String
+  createdAt     DateTime        @default(now())
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_analyses")
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  userId        String
+  amount        Float
+  currency      String   @default("USD")
+  status        String
+  provider      String
+  providerRef   String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  read      Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model WatchlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  symbol    String
+  market    MarketType
+  addedAt   DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+  @@map("watchlist_items")
+}
+
+model TradingHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  symbol      String
+  direction   SignalDirection
+  entryPrice  Float
+  exitPrice   Float?
+  size        Float    @default(1)
+  pnl         Float?
+  pnlPercent  Float?
+  status      String
+  openedAt    DateTime
+  closedAt    DateTime?
+  notes       String?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("trading_history")
+}
+
+model AdminLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String
+  target    String?
+  details   Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  admin     User     @relation("AdminLogs", fields: [adminId], references: [id])
+
+  @@map("admin_logs")
+}

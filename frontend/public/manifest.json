@@ -1,0 +1,21 @@
+{
+  "name": "TradeAI — AI Trading Platform",
+  "short_name": "TradeAI",
+  "description": "AI-powered trading analysis platform with smart money concepts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050508",
+  "theme_color": "#00f5ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
