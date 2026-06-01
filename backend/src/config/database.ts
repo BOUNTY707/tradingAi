@@ -4,9 +4,9 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
 function createPrisma(): PrismaClient {
   const url = process.env.DATABASE_URL ?? 'file:./prisma/dev.db'
-  const log = process.env.NODE_ENV === 'development'
-    ? (['error', 'warn'] as const)
-    : (['error'] as const)
+  const log: ('error' | 'warn')[] = process.env.NODE_ENV === 'development'
+    ? ['error', 'warn']
+    : ['error']
 
   if (url.startsWith('postgresql://') || url.startsWith('postgres://')) {
     // Production: Supabase / PostgreSQL
