@@ -45,9 +45,9 @@ const SWING_LIST: WatchItem[] = [
 
 // ─── Intervals ────────────────────────────────────────────────────────────────
 
-const SCALP_INTERVAL_MS    =  2 * 60 * 1000   // 2 daqiqa
-const INTRADAY_INTERVAL_MS = 15 * 60 * 1000   // 15 daqiqa
-const SWING_INTERVAL_MS    = 30 * 60 * 1000   // 30 daqiqa
+const SCALP_INTERVAL_MS    = 30 * 60 * 1000   // 30 daqiqa
+const INTRADAY_INTERVAL_MS =  2 * 60 * 60 * 1000   // 2 soat
+const SWING_INTERVAL_MS    =  6 * 60 * 60 * 1000   // 6 soat
 
 const SCALP_DELAY_MS   = 3_000   // 3 sec (scalp orasida)
 const DEFAULT_DELAY_MS = 7_000   // 7 sec (intraday/swing orasida)
