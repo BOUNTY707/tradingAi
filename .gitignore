@@ -37,5 +37,8 @@ Thumbs.db
 # Prisma generated
 src/generated/
 
-# Claude
-.claude/settings.local.json
+# Claude — barcha Claude fayllari
+.claude/
+**/.claude/
+memory/
+MEMORY.md
