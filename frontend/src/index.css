@@ -12,8 +12,15 @@
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
+:root {
+  --bg-main: #050508;
+  --bg-surface: #0a0a0f;
+  --accent: #00f5ff;
+  --accent-rgb: 0, 245, 255;
+}
+
 * { box-sizing: border-box; }
-body { background: #050508; color: #fff; font-family: var(--font-sans); }
+body { background: var(--bg-main); color: #fff; font-family: var(--font-sans); }
 
 .glass {
   background: rgba(255,255,255,0.03);
@@ -21,12 +28,12 @@ body { background: #050508; color: #fff; font-family: var(--font-sans); }
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-.glow-neon { box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+.glow-neon { box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.3); }
 .glow-purple { box-shadow: 0 0 20px rgba(124,58,237,0.4); }
 .glow-green { box-shadow: 0 0 20px rgba(0,255,136,0.3); }
 
 .gradient-text {
-  background: linear-gradient(135deg, #00f5ff, #7c3aed);
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -40,5 +47,22 @@ body { background: #050508; color: #fff; font-family: var(--font-sans); }
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-ticker { animation: ticker-scroll 30s linear infinite; }
+.shimmer-text {
+  background: linear-gradient(90deg, #00f5ff 0%, #fff 40%, #7c3aed 60%, #00f5ff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}

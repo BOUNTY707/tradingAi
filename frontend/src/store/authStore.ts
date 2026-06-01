@@ -1,6 +1,28 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+export interface UserSettings {
+  notifications?: {
+    signals: boolean
+    email: boolean
+    browser: boolean
+    highConf: boolean
+    dailySummary: boolean
+  }
+  appearance?: {
+    theme: string
+    accentColor: string
+  }
+  preferences?: {
+    currency: string
+    timezone: string
+    language: string
+    defaultMarket: string
+    defaultTimeframe: string
+    minConfidence: string
+  }
+}
+
 export interface User {
   id: string
   email: string
@@ -9,6 +31,7 @@ export interface User {
   role: 'USER' | 'ADMIN' | 'MODERATOR'
   isApproved: boolean
   emailVerified: boolean
+  settings?: UserSettings | null
   subscription?: {
     status: string
     plan: { name: string; type: string }

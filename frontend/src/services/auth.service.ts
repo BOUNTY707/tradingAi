@@ -1,4 +1,5 @@
 import api from '@/lib/api'
+import type { UserSettings } from '@/store/authStore'
 
 export interface LoginPayload { email: string; password: string }
 export interface RegisterPayload { email: string; password: string; firstName: string; lastName: string }
@@ -26,6 +27,21 @@ export const authService = {
   async me() {
     const { data } = await api.get('/auth/me')
     return data.data
+  },
+
+  async updateProfile(payload: { firstName: string; lastName: string }) {
+    const { data } = await api.patch('/auth/me', payload)
+    return data.data
+  },
+
+  async changePassword(payload: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+    const { data } = await api.post('/auth/change-password', payload)
+    return data
+  },
+
+  async updateSettings(settings: UserSettings) {
+    const { data } = await api.patch('/auth/settings', settings)
+    return data.data as UserSettings
   },
 
   async forgotPassword(email: string) {

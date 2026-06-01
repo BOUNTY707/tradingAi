@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import Sidebar from '@/components/layout/Sidebar'
+import PageBackground from '@/components/ui/PageBackground'
 
 interface AnalysisResult {
   direction: 'BUY' | 'SELL' | 'WAIT'
@@ -130,21 +131,25 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050508] flex">
+    <div className="min-h-screen bg-[#020206] flex relative">
+      <PageBackground />
       <Sidebar />
 
-      <main className="flex-1 lg:ml-64">
+      <main className="flex-1 lg:ml-64 relative" style={{ zIndex: 1 }}>
         {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5"
-          style={{ background: 'rgba(5,5,8,0.8)', backdropFilter: 'blur(12px)' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b"
+          style={{ background: 'rgba(2,2,8,0.85)', backdropFilter: 'blur(20px)', borderColor: 'rgba(0,245,255,0.06)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(0,245,255,0.1)', border: '1px solid rgba(0,245,255,0.2)' }}>
-              <Brain size={16} className="text-cyan-400" />
-            </div>
+            <motion.div
+              animate={{ boxShadow: ['0 0 0px rgba(0,245,255,0)', '0 0 14px rgba(0,245,255,0.5)', '0 0 0px rgba(0,245,255,0)'] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ background: 'rgba(0,245,255,0.1)', border: '1px solid rgba(0,245,255,0.22)' }}>
+              <Brain size={17} className="text-cyan-400" />
+            </motion.div>
             <div>
-              <div className="font-bold text-sm">AI Chart Analysis</div>
-              <div className="text-xs text-white/35">TradingView screenshot yuklab tahlil qiling</div>
+              <div className="font-black text-sm tracking-tight">AI Chart Analysis</div>
+              <div className="text-xs text-white/35 font-mono">// TradingView screenshot yuklang</div>
             </div>
           </div>
           {!isAuthenticated && (

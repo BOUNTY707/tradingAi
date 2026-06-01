@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { body } from 'express-validator'
+import bcrypt from 'bcryptjs'
 import { registerUser, loginUser, forgotPassword, resetPassword, googleAuthUser } from '../services/auth.service'
 import { success, error } from '../utils/apiResponse'
 import { AuthRequest } from '../middleware/auth'
@@ -75,14 +76,84 @@ export async function me(req: AuthRequest, res: Response): Promise<void> {
         role: true,
         isApproved: true,
         emailVerified: true,
+        settings: true,
         createdAt: true,
         subscription: { include: { plan: true } },
       },
     })
     if (!user) { error(res, 'User not found', 404); return }
-    success(res, user)
+    const parsed = { ...user, settings: user.settings ? JSON.parse(user.settings as string) : null }
+    success(res, parsed)
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to fetch user'
+    error(res, message, 500)
+  }
+}
+
+export const updateProfileValidators = [
+  body('firstName').trim().isLength({ min: 1 }).withMessage('First name is required'),
+  body('lastName').trim().isLength({ min: 1 }).withMessage('Last name is required'),
+]
+
+export async function updateProfile(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const { firstName, lastName } = req.body
+    const user = await prisma.user.update({
+      where: { id: req.user!.userId },
+      data: { firstName, lastName },
+      select: {
+        id: true, email: true, firstName: true, lastName: true,
+        role: true, isApproved: true, emailVerified: true, settings: true,
+        subscription: { include: { plan: true } },
+      },
+    })
+    const parsed = { ...user, settings: user.settings ? JSON.parse(user.settings as string) : null }
+    success(res, parsed, 200, 'Profile updated')
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to update profile'
+    error(res, message, 500)
+  }
+}
+
+export const changePasswordValidators = [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters'),
+  body('confirmPassword').notEmpty(),
+]
+
+export async function changePassword(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body
+    if (newPassword !== confirmPassword) {
+      error(res, 'Passwords do not match', 400); return
+    }
+    const user = await prisma.user.findUnique({ where: { id: req.user!.userId } })
+    if (!user || !user.password) {
+      error(res, 'User not found', 404); return
+    }
+    const valid = await bcrypt.compare(currentPassword, user.password)
+    if (!valid) {
+      error(res, 'Current password is incorrect', 400); return
+    }
+    const hashed = await bcrypt.hash(newPassword, 12)
+    await prisma.user.update({ where: { id: req.user!.userId }, data: { password: hashed } })
+    success(res, null, 200, 'Password updated successfully')
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to change password'
+    error(res, message, 500)
+  }
+}
+
+export async function updateSettings(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const settings = req.body
+    await prisma.user.update({
+      where: { id: req.user!.userId },
+      data: { settings: JSON.stringify(settings) },
+    })
+    success(res, settings, 200, 'Settings saved')
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to save settings'
     error(res, message, 500)
   }
 }

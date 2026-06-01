@@ -72,7 +72,7 @@ export default function RegisterPage() {
             <span className="font-bold text-xl gradient-text">TradeAI</span>
           </Link>
           <h1 className="text-2xl font-bold mb-1">Create your account</h1>
-          <p className="text-white/40 text-sm">Start your 7-day free Pro trial</p>
+          <p className="text-white/40 text-sm">Hisob yarating va savdoni boshlang</p>
         </div>
 
         <div className="glass rounded-2xl p-8 border border-white/5">

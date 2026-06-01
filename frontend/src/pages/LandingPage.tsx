@@ -6,18 +6,22 @@ import PricingSection from '@/components/landing/PricingSection'
 import TestimonialsSection from '@/components/landing/TestimonialsSection'
 import FAQSection from '@/components/landing/FAQSection'
 import Footer from '@/components/layout/Footer'
+import TradingBackground from '@/components/landing/TradingBackground'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#050508]">
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <StatsSection />
-      <PricingSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <Footer />
+    <div className="min-h-screen bg-[#020206] relative">
+      <TradingBackground />
+      <div className="relative" style={{ zIndex: 1 }}>
+        <Navbar />
+        <HeroSection />
+        <FeaturesSection />
+        <StatsSection />
+        <PricingSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <Footer />
+      </div>
     </div>
   )
 }

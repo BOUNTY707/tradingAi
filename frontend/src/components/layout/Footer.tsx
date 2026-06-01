@@ -1,5 +1,6 @@
-import { TrendingUp, Send, ExternalLink } from 'lucide-react'
+import { Send, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import TradeAILogo from '@/components/ui/TradeAILogo'
 
 const LINKS = [
   {
@@ -42,11 +43,8 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                <TrendingUp size={16} className="text-white" />
-              </div>
-              <span className="font-black text-xl gradient-text">TradeAI</span>
+            <Link to="/" className="mb-5 inline-block">
+              <TradeAILogo size={38} textSize="text-xl" />
             </Link>
             <p className="text-white/35 text-sm leading-relaxed mb-6 max-w-xs">
               Institutional AI savdo intellekti — zamonaviy treyderlar uchun. Har 30 daqiqada yangi real signallar.
@@ -54,15 +52,41 @@ export default function Footer() {
             {/* Socials */}
             <div className="flex items-center gap-3">
               {[
-                { Icon: ExternalLink, href: '#', label: 'Twitter'  },
-                { Icon: Send,         href: '#', label: 'Telegram' },
-                { Icon: ExternalLink, href: '#', label: 'GitHub'   },
-              ].map(({ Icon, href, label }) => (
+                {
+                  label: 'Instagram',
+                  href: 'https://www.instagram.com/_mexrob_off/',
+                  color: '#E1306C',
+                  icon: (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <circle cx="12" cy="12" r="4"/>
+                      <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+                    </svg>
+                  ),
+                },
+                {
+                  label: 'Telegram',
+                  href: 'https://t.me/TradeAi_Admin1',
+                  color: '#29B6F6',
+                  icon: <Send size={14} />,
+                },
+                {
+                  label: 'Email',
+                  href: 'mailto:mehrobakooo@gmail.com',
+                  color: '#00f5ff',
+                  icon: <Mail size={14} />,
+                },
+              ].map(({ label, href, color, icon }) => (
                 <a key={label} href={href}
-                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
+                  target={href.startsWith('mailto') ? undefined : '_blank'}
+                  rel="noopener noreferrer"
+                  className="group w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
                   style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                   aria-label={label}>
-                  <Icon size={15} className="text-white/40 hover:text-white transition-colors" />
+                  <span className="text-white/40 group-hover:text-white transition-colors"
+                    style={{ '--hover-color': color } as React.CSSProperties}>
+                    {icon}
+                  </span>
                 </a>
               ))}
             </div>

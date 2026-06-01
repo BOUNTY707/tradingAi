@@ -3,8 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 enum Role {
@@ -54,6 +53,7 @@ model User {
   resetPasswordToken String?
   resetPasswordExp  DateTime?
   googleId          String?        @unique
+  settings          String?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   lastLoginAt       DateTime?

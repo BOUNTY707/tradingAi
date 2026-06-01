@@ -5,6 +5,7 @@ import {
   X, Loader2, Trash2, CheckSquare, Search, RefreshCw,
 } from 'lucide-react'
 import Sidebar from '@/components/layout/Sidebar'
+import PageBackground from '@/components/ui/PageBackground'
 import { Button } from '@/components/ui/Button'
 import { useMarketData } from '@/hooks/useMarketData'
 import api from '@/lib/api'
@@ -299,56 +300,87 @@ export default function PortfolioPage() {
   const winRate  = closedTrades.length > 0 ? (winners / closedTrades.length) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-[#050508] flex">
+    <div className="min-h-screen bg-[#020206] flex relative">
+      <PageBackground />
       <Sidebar />
 
-      <main className="flex-1 lg:ml-64 p-6">
+      <main className="flex-1 lg:ml-64 p-6 relative" style={{ zIndex: 1 }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-7">
           <div>
-            <h1 className="text-2xl font-bold">Portfolio</h1>
-            <p className="text-white/40 text-sm mt-0.5">Sizning savdo tarixingiz</p>
+            <h1 className="text-2xl font-black tracking-tight mb-1">Portfolio</h1>
+            <p className="text-white/35 text-sm font-mono">// savdo tarixi va P&L kuzatuvi</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={fetchTrades} className="glass rounded-xl p-2.5 border border-white/5 hover:bg-white/5 transition-colors">
-              <RefreshCw size={15} className="text-white/50" />
-            </button>
+          <div className="flex items-center gap-2.5">
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              onClick={fetchTrades}
+              className="rounded-xl p-2.5 transition-all"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <RefreshCw size={15} className="text-white/40" />
+            </motion.button>
             <Button onClick={() => setShowAdd(true)} size="md">
               <Plus size={14} /> Trade qo'shish
             </Button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {[
-            { icon: DollarSign, label: 'Jami P&L',    value: `${totalPnl >= 0 ? '+' : ''}$${totalPnl.toFixed(2)}`,     sub: `${closedTrades.length} yopilgan`, color: totalPnl >= 0 ? 'text-green-400' : 'text-red-400' },
-            { icon: TrendingUp, label: 'Win Rate',     value: `${winRate.toFixed(1)}%`,                                  sub: `${winners} g'alaba`,               color: 'text-cyan-400' },
-            { icon: Activity,   label: 'Ochiq P&L',   value: `${openPnlTotal >= 0 ? '+' : ''}$${openPnlTotal.toFixed(2)}`, sub: `${openTrades.length} ochiq`,    color: openPnlTotal >= 0 ? 'text-green-400' : 'text-red-400' },
-            { icon: BarChart3,  label: 'Jami Trade',  value: trades.length.toString(),                                  sub: `${closedTrades.length} yopilgan`, color: 'text-violet-400' },
-          ].map((stat, i) => (
+        {(() => {
+          const statItems = [
+            { icon: DollarSign, label: 'Jami P&L',   value: `${totalPnl >= 0 ? '+' : ''}$${totalPnl.toFixed(2)}`,        sub: `${closedTrades.length} yopilgan`, hex: totalPnl >= 0 ? '#4ade80' : '#f87171' },
+            { icon: TrendingUp, label: 'Win Rate',    value: `${winRate.toFixed(1)}%`,                                     sub: `${winners} g'alaba`,              hex: '#00f5ff' },
+            { icon: Activity,   label: 'Ochiq P&L',  value: `${openPnlTotal >= 0 ? '+' : ''}$${openPnlTotal.toFixed(2)}`, sub: `${openTrades.length} ochiq`,      hex: openPnlTotal >= 0 ? '#4ade80' : '#f87171' },
+            { icon: BarChart3,  label: 'Jami Trade', value: trades.length.toString(),                                      sub: `${closedTrades.length} yopilgan`, hex: '#a78bfa' },
+          ]
+          return (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+          {statItems.map((stat, i) => (
             <motion.div key={stat.label}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="glass rounded-2xl p-5 border border-white/5">
+              initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.07, type: 'spring', stiffness: 150 }}
+              whileHover={{ y: -3, transition: { duration: 0.2 } }}
+              className="relative rounded-2xl p-5 overflow-hidden group"
+              style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
+                className="absolute top-0 left-0 right-0 h-[2px] origin-left"
+                style={{ background: `linear-gradient(90deg, transparent, ${stat.hex}, transparent)` }} />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+                style={{ background: `radial-gradient(circle at 20% 50%, ${stat.hex}10, transparent 70%)` }} />
               <div className="flex items-center justify-between mb-3">
-                <span className="text-white/40 text-xs">{stat.label}</span>
-                <stat.icon size={14} className={stat.color} />
+                <span className="text-white/35 text-xs">{stat.label}</span>
+                <motion.div animate={{ boxShadow: [`0 0 0px ${stat.hex}00`, `0 0 10px ${stat.hex}50`, `0 0 0px ${stat.hex}00`] }}
+                  transition={{ duration: 2.5 + i * 0.4, repeat: Infinity }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: `${stat.hex}12`, border: `1px solid ${stat.hex}25` }}>
+                  <stat.icon size={13} style={{ color: stat.hex }} />
+                </motion.div>
               </div>
-              <div className={`text-2xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+              <div className="text-2xl font-black mb-1" style={{ color: stat.hex }}>{stat.value}</div>
               <div className="text-xs text-white/30">{stat.sub}</div>
             </motion.div>
           ))}
         </div>
+          )
+        })()}
 
         {/* Table */}
-        <div className="glass rounded-2xl border border-white/5 overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-white/5">
-            <h2 className="font-semibold">Savdo tarixi</h2>
-            <div className="flex gap-1 p-1 glass rounded-xl border border-white/5">
+        <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(0,245,255,0.07)' }}>
+            <div className="flex items-center gap-2.5">
+              <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+              <h2 className="font-bold">Savdo tarixi</h2>
+            </div>
+            <div className="flex gap-0.5 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
               {(['all', 'open', 'closed'] as const).map(f => (
                 <button key={f} onClick={() => setFilter(f)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors capitalize
-                    ${filter === f ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'}`}>
+                  className="px-3 py-1 rounded-lg text-xs font-medium transition-all capitalize"
+                  style={{
+                    background: filter === f ? 'rgba(0,245,255,0.1)' : 'transparent',
+                    color: filter === f ? '#00f5ff' : 'rgba(255,255,255,0.35)',
+                    border: filter === f ? '1px solid rgba(0,245,255,0.25)' : '1px solid transparent',
+                  }}>
                   {f}
                 </button>
               ))}

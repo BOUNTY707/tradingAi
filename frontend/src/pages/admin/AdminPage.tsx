@@ -6,10 +6,12 @@ import {
   Clock, RefreshCw, Eye, KeyRound, UserCheck, UserX, Search, Info,
   DollarSign, BarChart2, UserPlus, Wallet,
 } from 'lucide-react'
+import TradeAILogo from '@/components/ui/TradeAILogo'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { authService } from '@/services/auth.service'
 import api from '@/lib/api'
+import PageBackground from '@/components/ui/PageBackground'
 
 // ─── Types ────────────────────────────────────────────────────────
 
@@ -317,14 +319,18 @@ export default function AdminPage() {
   const fmt = (n: number) => n.toLocaleString('uz-UZ') + ' so\'m'
 
   return (
-    <div className="min-h-screen bg-[#050508] flex">
+    <div className="min-h-screen bg-[#020206] flex relative">
+      <PageBackground />
       {/* Sidebar */}
-      <aside className="w-60 hidden lg:flex flex-col glass border-r border-white/5 p-5 fixed h-full z-40">
-        <Link to="/" className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
-            <TrendingUp size={15} className="text-white" />
-          </div>
-          <span className="font-bold gradient-text">TradeAI Admin</span>
+      <aside className="w-60 hidden lg:flex flex-col border-r p-5 fixed h-full z-40"
+        style={{
+          background: 'rgba(2,2,8,0.92)',
+          backdropFilter: 'blur(24px)',
+          borderColor: 'rgba(0,245,255,0.06)',
+          boxShadow: '4px 0 32px rgba(0,0,0,0.4)',
+        }}>
+        <Link to="/" className="mb-8 block">
+          <TradeAILogo size={32} textSize="text-base" />
         </Link>
 
         <nav className="flex-1 space-y-1">
@@ -362,14 +368,22 @@ export default function AdminPage() {
         </div>
       </aside>
 
-      <main className="flex-1 lg:ml-60 p-6">
+      <main className="flex-1 lg:ml-60 p-6 relative" style={{ zIndex: 1 }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-7">
           <div>
-            <h1 className="text-2xl font-bold">
-              {activeTab === 'overview' ? 'Statistika' : activeTab === 'payments' ? "To'lov so'rovlari" : 'Foydalanuvchilar'}
-            </h1>
-            <p className="text-white/40 text-sm mt-0.5">
+            <div className="flex items-center gap-2.5 mb-1">
+              <h1 className="text-2xl font-black tracking-tight">
+                {activeTab === 'overview' ? 'Statistika' : activeTab === 'payments' ? "To'lov so'rovlari" : 'Foydalanuvchilar'}
+              </h1>
+              <div className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-violet-400"
+                style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.18)' }}>
+                ADMIN
+              </div>
+            </div>
+            <p className="text-white/35 text-sm font-mono">
+              {'// '}
               {activeTab === 'overview'
                 ? `Jami ${stats?.totalUsers ?? 0} foydalanuvchi`
                 : activeTab === 'payments'
@@ -377,31 +391,61 @@ export default function AdminPage() {
                 : `${users.length} ta foydalanuvchi`}
             </p>
           </div>
-          <button onClick={fetchData}
-            className="flex items-center gap-2 glass rounded-xl px-4 py-2.5 text-sm border border-white/5 hover:bg-white/5 transition-colors">
-            <RefreshCw size={13} className={loading ? 'animate-spin text-cyan-400' : 'text-white/50'} />
-            Yangilash
-          </button>
-        </div>
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={fetchData}
+            className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-all"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <RefreshCw size={13} className={loading ? 'animate-spin text-cyan-400' : 'text-white/40'} />
+            <span className="text-white/60">Yangilash</span>
+          </motion.button>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {[
-            { icon: Users,      label: 'Jami foydalanuvchilar',  value: stats?.totalUsers ?? '—',          color: 'text-cyan-400'   },
-            { icon: CreditCard, label: "Kutilayotgan to'lovlar",  value: stats?.pendingPayments ?? '—',     color: 'text-yellow-400' },
-            { icon: TrendingUp, label: 'Faol signallar',          value: stats?.totalSignals ?? '—',        color: 'text-green-400'  },
-            { icon: Activity,   label: 'Faol obunalar',           value: stats?.activeSubscriptions ?? '—', color: 'text-violet-400' },
-          ].map((s, i) => (
-            <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="glass rounded-2xl p-5 border border-white/5">
+        {(() => {
+          const statRows = [
+            { icon: Users,      label: 'Jami foydalanuvchilar',  value: stats?.totalUsers ?? '—',          hex: '#00f5ff'  },
+            { icon: CreditCard, label: "Kutilayotgan to'lovlar",  value: stats?.pendingPayments ?? '—',     hex: '#fbbf24'  },
+            { icon: TrendingUp, label: 'Faol signallar',          value: stats?.totalSignals ?? '—',        hex: '#4ade80'  },
+            { icon: Activity,   label: 'Faol obunalar',           value: stats?.activeSubscriptions ?? '—', hex: '#a78bfa'  },
+          ]
+          return (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+          {statRows.map((s, i) => (
+            <motion.div key={s.label} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.07, type: 'spring', stiffness: 150 }}
+              whileHover={{ y: -3, transition: { duration: 0.2 } }}
+              className="relative rounded-2xl p-5 overflow-hidden group"
+              style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <motion.div
+                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ delay: 0.35 + i * 0.1, duration: 0.6 }}
+                className="absolute top-0 left-0 right-0 h-[2px] origin-left"
+                style={{ background: `linear-gradient(90deg, transparent, ${s.hex}, transparent)` }}
+              />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+                style={{ background: `radial-gradient(circle at 20% 50%, ${s.hex}10, transparent 70%)` }} />
               <div className="flex items-center justify-between mb-3">
-                <span className="text-white/40 text-xs">{s.label}</span>
-                <s.icon size={14} className={s.color} />
+                <span className="text-white/35 text-xs font-medium">{s.label}</span>
+                <motion.div
+                  animate={{ boxShadow: [`0 0 0px ${s.hex}00`, `0 0 10px ${s.hex}50`, `0 0 0px ${s.hex}00`] }}
+                  transition={{ duration: 2.5 + i * 0.4, repeat: Infinity }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: `${s.hex}12`, border: `1px solid ${s.hex}25` }}>
+                  <s.icon size={13} style={{ color: s.hex }} />
+                </motion.div>
               </div>
-              <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+              <div className="text-2xl font-black" style={{ color: s.hex }}>{s.value}</div>
+              <motion.div
+                animate={{ scale: [1, 1.5, 1], opacity: [0.7, 0, 0.7] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6 }}
+                className="absolute bottom-4 right-4 w-1.5 h-1.5 rounded-full"
+                style={{ background: s.hex }}
+              />
             </motion.div>
           ))}
         </div>
+          )
+        })()}
 
         {/* ── Overview Tab ── */}
         {activeTab === 'overview' && (
@@ -431,23 +475,39 @@ export default function AdminPage() {
                   value: stats?.newUsersThisMonth ?? '—',
                   sub: `O'tgan oy: ${stats?.newUsersLastMonth ?? 0} ta`,
                 },
-              ].map((card, i) => (
+              ].map((card, i) => {
+                const hexMap: Record<string, string> = { 'text-green-400': '#4ade80', 'text-cyan-400': '#00f5ff', 'text-violet-400': '#a78bfa', 'text-yellow-400': '#fbbf24' }
+                const hex = hexMap[card.color] ?? '#00f5ff'
+                return (
                 <motion.div key={card.label}
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-                  className="glass rounded-2xl p-5 border border-white/5">
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: i * 0.07, type: 'spring', stiffness: 150 }}
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                  className="relative rounded-2xl p-5 overflow-hidden group"
+                  style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
+                    className="absolute top-0 left-0 right-0 h-[2px] origin-left"
+                    style={{ background: `linear-gradient(90deg, transparent, ${hex}, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+                    style={{ background: `radial-gradient(circle at 20% 50%, ${hex}10, transparent 70%)` }} />
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-white/40 text-xs">{card.label}</span>
-                    <card.icon size={15} className={card.color} />
+                    <span className="text-white/35 text-xs">{card.label}</span>
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{ background: `${hex}12`, border: `1px solid ${hex}25` }}>
+                      <card.icon size={13} style={{ color: hex }} />
+                    </div>
                   </div>
-                  <div className={`text-2xl font-bold mb-1 ${card.color}`}>{card.value}</div>
+                  <div className="text-2xl font-black mb-1" style={{ color: hex }}>{card.value}</div>
                   <div className="text-xs text-white/25">{card.sub}</div>
                 </motion.div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Revenue chart with period toggle */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="glass rounded-2xl p-6 border border-white/5">
+              className="rounded-2xl p-6 border border-white/[0.07]" style={{ background: 'rgba(255,255,255,0.025)' }}>
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-semibold flex items-center gap-2">
                   <TrendingUp size={16} className="text-green-400" /> Daromad
@@ -507,7 +567,7 @@ export default function AdminPage() {
 
             {/* Revenue by plan */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-              className="glass rounded-2xl p-6 border border-white/5">
+              className="rounded-2xl p-6 border border-white/[0.07]" style={{ background: 'rgba(255,255,255,0.025)' }}>
               <h3 className="font-semibold mb-5 flex items-center gap-2">
                 <BarChart2 size={16} className="text-cyan-400" /> Reja bo'yicha daromad
               </h3>
@@ -540,7 +600,7 @@ export default function AdminPage() {
 
             {/* User growth chart */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-              className="glass rounded-2xl p-6 border border-white/5">
+              className="rounded-2xl p-6 border border-white/[0.07]" style={{ background: 'rgba(255,255,255,0.025)' }}>
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-semibold flex items-center gap-2">
                   <UserPlus size={16} className="text-cyan-400" /> Foydalanuvchi o'sishi
@@ -602,7 +662,7 @@ export default function AdminPage() {
 
             {/* System stats */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-              className="glass rounded-2xl p-6 border border-white/5">
+              className="rounded-2xl p-6 border border-white/[0.07]" style={{ background: 'rgba(255,255,255,0.025)' }}>
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Activity size={16} className="text-violet-400" /> Tizim holati
               </h3>
@@ -626,7 +686,7 @@ export default function AdminPage() {
 
         {/* ── Payments Tab ── */}
         {activeTab === 'payments' && (
-          <div className="glass rounded-2xl border border-white/5 overflow-hidden">
+          <div className="rounded-2xl border border-white/[0.07] overflow-hidden" style={{ background: 'rgba(255,255,255,0.025)' }}>
             <div className="flex items-center gap-2 p-5 border-b border-white/5 flex-wrap">
               {(['PENDING', 'APPROVED', 'REJECTED', 'ALL'] as const).map(f => (
                 <button key={f} onClick={() => setFilter(f)}
@@ -711,7 +771,7 @@ export default function AdminPage() {
 
         {/* ── Users Tab ── */}
         {activeTab === 'users' && (
-          <div className="glass rounded-2xl border border-white/5 overflow-hidden">
+          <div className="rounded-2xl border border-white/[0.07] overflow-hidden" style={{ background: 'rgba(255,255,255,0.025)' }}>
             {/* Search */}
             <div className="p-5 border-b border-white/5 flex items-center gap-3">
               <div className="relative flex-1">

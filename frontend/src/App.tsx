@@ -12,6 +12,7 @@ import AdminPage from '@/pages/admin/AdminPage'
 import SignalsPage from '@/pages/signals/SignalsPage'
 import SettingsPage from '@/pages/settings/SettingsPage'
 import { useAuthStore } from '@/store/authStore'
+import { useTheme } from '@/hooks/useTheme'
 
 // Requires login + isApproved
 function ApprovedRoute({ children }: { children: React.ReactNode }) {
@@ -36,6 +37,7 @@ function GuestRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useTheme()
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

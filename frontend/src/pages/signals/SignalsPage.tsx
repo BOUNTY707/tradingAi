@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { BarChart3, TrendingUp, TrendingDown, Clock, Filter, RefreshCw, Loader2, Brain } from 'lucide-react'
 import Sidebar from '@/components/layout/Sidebar'
+import PageBackground from '@/components/ui/PageBackground'
 import { useSignals } from '@/hooks/useSignals'
 
 const MARKET_TABS = ['all', 'crypto', 'forex', 'stocks', 'metals'] as const
@@ -20,72 +21,107 @@ export default function SignalsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[#050508] flex">
+    <div className="min-h-screen bg-[#020206] flex relative">
+      <PageBackground />
       <Sidebar />
 
-      <main className="flex-1 lg:ml-64 p-6">
+      <main className="flex-1 lg:ml-64 p-6 relative" style={{ zIndex: 1 }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-7">
           <div>
-            <h1 className="text-2xl font-bold">AI Signals</h1>
-            <p className="text-white/40 text-sm mt-0.5">
+            <div className="flex items-center gap-2.5 mb-1">
+              <h1 className="text-2xl font-black tracking-tight">AI Signals</h1>
+              <motion.span
+                animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-2 h-2 bg-green-400 rounded-full" />
+            </div>
+            <p className="text-white/35 text-sm font-mono">
               {lastUpdated
-                ? `Oxirgi yangilanish: ${lastUpdated.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' })}`
-                : 'Real vaqtda AI signallar'}
+                ? `// ${lastUpdated.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' })} yangilandi`
+                : '// real vaqtda AI signallar'}
             </p>
           </div>
-          <button onClick={refresh} disabled={loading}
-            className="flex items-center gap-2 glass rounded-xl px-4 py-2.5 text-sm font-medium border border-white/5 hover:bg-white/5 transition-colors disabled:opacity-50">
-            <RefreshCw size={14} className={loading ? 'animate-spin text-cyan-400' : 'text-white/50'} />
-            Yangilash
-          </button>
-        </div>
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={refresh} disabled={loading}
+            className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-all disabled:opacity-50"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <RefreshCw size={14} className={loading ? 'animate-spin text-cyan-400' : 'text-white/40'} />
+            <span className="text-white/60">Yangilash</span>
+          </motion.button>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'Faol signallar', value: loading ? '—' : stats.active.toString(),         icon: BarChart3,   color: 'text-white'    },
-            { label: 'BUY signallar',  value: loading ? '—' : signals.filter(s=>s.direction==='BUY').length.toString(), icon: TrendingUp, color: 'text-green-400' },
-            { label: 'SELL signallar', value: loading ? '—' : signals.filter(s=>s.direction==='SELL').length.toString(), icon: TrendingDown, color: 'text-red-400' },
-            { label: 'Avg Confidence', value: loading ? '—' : `${stats.avgConfidence}%`,       icon: Brain,       color: 'text-cyan-400' },
-          ].map((stat, i) => (
+        {(() => {
+          const statItems = [
+            { label: 'Faol signallar', value: loading ? '—' : stats.active.toString(),         icon: BarChart3,   hex: '#00f5ff'  },
+            { label: 'BUY signallar',  value: loading ? '—' : signals.filter(s=>s.direction==='BUY').length.toString(), icon: TrendingUp, hex: '#4ade80' },
+            { label: 'SELL signallar', value: loading ? '—' : signals.filter(s=>s.direction==='SELL').length.toString(), icon: TrendingDown, hex: '#f87171' },
+            { label: 'Avg Confidence', value: loading ? '—' : `${stats.avgConfidence}%`,       icon: Brain,       hex: '#a78bfa'  },
+          ]
+          return (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+          {statItems.map((stat, i) => (
             <motion.div key={stat.label}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="glass rounded-2xl p-5 border border-white/5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-white/40 text-xs">{stat.label}</span>
-                <stat.icon size={14} className={stat.color} />
+              initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.07, type: 'spring', stiffness: 150 }}
+              whileHover={{ y: -3, transition: { duration: 0.2 } }}
+              className="relative rounded-2xl p-5 overflow-hidden group"
+              style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
+                className="absolute top-0 left-0 right-0 h-[2px] origin-left"
+                style={{ background: `linear-gradient(90deg, transparent, ${stat.hex}, transparent)` }} />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+                style={{ background: `radial-gradient(circle at 20% 50%, ${stat.hex}10, transparent 70%)` }} />
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-white/35 text-xs">{stat.label}</span>
+                <motion.div animate={{ boxShadow: [`0 0 0px ${stat.hex}00`, `0 0 10px ${stat.hex}50`, `0 0 0px ${stat.hex}00`] }}
+                  transition={{ duration: 2.5 + i * 0.4, repeat: Infinity }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: `${stat.hex}12`, border: `1px solid ${stat.hex}25` }}>
+                  <stat.icon size={13} style={{ color: stat.hex }} />
+                </motion.div>
               </div>
-              <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+              <div className="text-2xl font-black" style={{ color: stat.hex }}>{stat.value}</div>
+              <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.7, 0, 0.7] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6 }}
+                className="absolute bottom-4 right-4 w-1.5 h-1.5 rounded-full" style={{ background: stat.hex }} />
             </motion.div>
           ))}
         </div>
+          )
+        })()}
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <div className="flex gap-1 p-1 glass rounded-xl border border-white/5">
+        <div className="flex flex-wrap items-center gap-3 mb-7">
+          <div className="flex gap-0.5 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
             {MARKET_TABS.map(tab => (
               <button key={tab} onClick={() => setActiveMarket(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize
-                  ${activeMarket === tab ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'}`}>
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize"
+                style={{
+                  background: activeMarket === tab ? 'rgba(0,245,255,0.1)' : 'transparent',
+                  color: activeMarket === tab ? '#00f5ff' : 'rgba(255,255,255,0.35)',
+                  border: activeMarket === tab ? '1px solid rgba(0,245,255,0.25)' : '1px solid transparent',
+                }}>
                 {tab}
               </button>
             ))}
           </div>
-          <div className="flex gap-1 p-1 glass rounded-xl border border-white/5">
+          <div className="flex gap-0.5 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
             {(['all', 'buy', 'sell'] as const).map(s => (
               <button key={s} onClick={() => setActiveSide(s)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors uppercase
-                  ${activeSide === s
-                    ? s === 'buy'  ? 'bg-green-500/20 text-green-400'
-                    : s === 'sell' ? 'bg-red-500/20 text-red-400'
-                    : 'bg-white/10 text-white'
-                    : 'text-white/40 hover:text-white/70'}`}>
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all uppercase"
+                style={{
+                  background: activeSide === s ? s === 'buy' ? 'rgba(74,222,128,0.12)' : s === 'sell' ? 'rgba(248,113,113,0.12)' : 'rgba(255,255,255,0.08)' : 'transparent',
+                  color: activeSide === s ? s === 'buy' ? '#4ade80' : s === 'sell' ? '#f87171' : '#fff' : 'rgba(255,255,255,0.35)',
+                  border: activeSide === s ? `1px solid ${s === 'buy' ? 'rgba(74,222,128,0.3)' : s === 'sell' ? 'rgba(248,113,113,0.3)' : 'rgba(255,255,255,0.2)'}` : '1px solid transparent',
+                }}>
                 {s}
               </button>
             ))}
           </div>
-          <div className="ml-auto flex items-center gap-1 text-white/30 text-xs">
+          <div className="ml-auto flex items-center gap-1.5 text-white/30 text-xs font-mono">
             <Filter size={11} />
             {filtered.length} signal
           </div>
@@ -93,24 +129,34 @@ export default function SignalsPage() {
 
         {/* Content */}
         {loading ? (
-          <div className="glass rounded-2xl p-16 border border-white/5 text-center">
+          <div className="rounded-2xl p-16 border border-white/[0.07] text-center"
+            style={{ background: 'rgba(255,255,255,0.025)' }}>
             <Loader2 size={32} className="text-cyan-400/50 mx-auto mb-3 animate-spin" />
             <p className="text-white/40 text-sm">AI signallar yuklanmoqda...</p>
-            <p className="text-white/20 text-xs mt-1">Binance va Claude AI dan ma'lumot olinmoqda</p>
+            <p className="text-white/20 text-xs mt-1 font-mono">// Binance va Claude AI dan ma'lumot olinmoqda</p>
           </div>
         ) : error ? (
-          <div className="glass rounded-2xl p-16 border border-red-500/20 text-center">
+          <div className="rounded-2xl p-16 text-center" style={{ background: 'rgba(248,113,113,0.04)', border: '1px solid rgba(248,113,113,0.15)' }}>
             <p className="text-red-400/70 text-sm">{error}</p>
           </div>
         ) : filtered.length > 0 ? (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((s, i) => {
               const isBuy = s.direction === 'BUY'
+              const accentColor = isBuy ? '#4ade80' : '#f87171'
               return (
                 <motion.div key={s.id}
                   initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                  className={`glass rounded-2xl p-5 border transition-all hover:border-white/10
-                    ${isBuy ? 'border-green-500/15' : 'border-red-500/15'}`}>
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                  className="relative rounded-2xl p-5 overflow-hidden group"
+                  style={{
+                    background: isBuy ? 'rgba(74,222,128,0.03)' : 'rgba(248,113,113,0.03)',
+                    border: isBuy ? '1px solid rgba(74,222,128,0.15)' : '1px solid rgba(248,113,113,0.15)',
+                  }}>
+                  <div className="absolute top-0 left-0 right-0 h-[2px]"
+                    style={{ background: `linear-gradient(90deg, transparent, ${accentColor}50, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+                    style={{ background: `radial-gradient(circle at 30% 40%, ${accentColor}06, transparent 65%)` }} />
                   {/* Top */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -178,12 +224,15 @@ export default function SignalsPage() {
             })}
           </div>
         ) : (
-          <div className="glass rounded-2xl p-16 border border-white/5 text-center">
-            <Brain size={36} className="text-white/15 mx-auto mb-3" />
+          <div className="rounded-2xl p-16 text-center"
+            style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'rgba(0,245,255,0.06)', border: '1px solid rgba(0,245,255,0.12)' }}>
+              <Brain size={24} className="text-cyan-400/40" />
+            </div>
             <p className="text-white/30 text-sm font-medium">Hozir signal topilmadi</p>
-            <p className="text-white/20 text-xs mt-1.5">
-              AI har 30 daqiqada BTC, ETH, SOL, EUR/USD va boshqalarni tahlil qiladi.<br />
-              Bozor sharoiti yetarli bo'lganda signal avtomatik paydo bo'ladi.
+            <p className="text-white/20 text-xs mt-1.5 font-mono">
+              // AI har 30 daqiqada BTC, ETH, SOL, EUR/USD va boshqalarni tahlil qiladi
             </p>
           </div>
         )}
