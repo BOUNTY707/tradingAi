@@ -59,8 +59,22 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 // Init WebSockets
 initSockets(httpServer, config.frontendUrl)
 
+function keepAlive(): void {
+  if (config.nodeEnv !== 'production') return
+  const url = process.env.RENDER_EXTERNAL_URL || `http://localhost:${config.port}`
+  setInterval(async () => {
+    try {
+      await fetch(`${url}/health`)
+      logger.info('[KeepAlive] ping ok')
+    } catch {
+      logger.warn('[KeepAlive] ping failed')
+    }
+  }, 10 * 60 * 1000)
+}
+
 httpServer.listen(config.port, () => {
   logger.info(`Server running on port ${config.port} (${config.nodeEnv})`)
   seedAdmin()
   startSignalGenerator()
+  keepAlive()
 })
