@@ -1,3 +1,10 @@
+databases:
+  - name: tradeai-db
+    databaseName: tradeai
+    user: tradeai
+    plan: free
+    region: frankfurt
+
 services:
   - type: web
     name: tradeai-backend
@@ -14,7 +21,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: tradeai-db
+          property: connectionString
       - key: JWT_SECRET
         sync: false
       - key: JWT_REFRESH_SECRET
