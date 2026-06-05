@@ -12,42 +12,34 @@ interface WatchItem {
 // ─── Watchlists per tier ──────────────────────────────────────────────────────
 
 const SCALP_LIST: WatchItem[] = [
-  { symbol: 'BTC/USDT', market: 'CRYPTO', timeframe: '1m',  tradeType: 'Scalp' },
   { symbol: 'BTC/USDT', market: 'CRYPTO', timeframe: '5m',  tradeType: 'Scalp' },
-  { symbol: 'ETH/USDT', market: 'CRYPTO', timeframe: '1m',  tradeType: 'Scalp' },
   { symbol: 'ETH/USDT', market: 'CRYPTO', timeframe: '5m',  tradeType: 'Scalp' },
   { symbol: 'SOL/USDT', market: 'CRYPTO', timeframe: '5m',  tradeType: 'Scalp' },
   { symbol: 'XRP/USDT', market: 'CRYPTO', timeframe: '5m',  tradeType: 'Scalp' },
   { symbol: 'XAU/USD',  market: 'METALS', timeframe: '5m',  tradeType: 'Scalp' },
-  { symbol: 'XAU/USD',  market: 'METALS', timeframe: '1m',  tradeType: 'Scalp' },
 ]
 
 const INTRADAY_LIST: WatchItem[] = [
   { symbol: 'BTC/USDT', market: 'CRYPTO', timeframe: '15m', tradeType: 'Intraday' },
   { symbol: 'ETH/USDT', market: 'CRYPTO', timeframe: '15m', tradeType: 'Intraday' },
   { symbol: 'SOL/USDT', market: 'CRYPTO', timeframe: '15m', tradeType: 'Intraday' },
-  { symbol: 'BNB/USDT', market: 'CRYPTO', timeframe: '15m', tradeType: 'Intraday' },
   { symbol: 'XAU/USD',  market: 'METALS', timeframe: '1H',  tradeType: 'Intraday' },
   { symbol: 'EUR/USD',  market: 'FOREX',  timeframe: '1H',  tradeType: 'Intraday' },
-  { symbol: 'GBP/USD',  market: 'FOREX',  timeframe: '1H',  tradeType: 'Intraday' },
 ]
 
 const SWING_LIST: WatchItem[] = [
   { symbol: 'BTC/USDT', market: 'CRYPTO', timeframe: '4H', tradeType: 'Swing' },
   { symbol: 'ETH/USDT', market: 'CRYPTO', timeframe: '4H', tradeType: 'Swing' },
-  { symbol: 'SOL/USDT', market: 'CRYPTO', timeframe: '4H', tradeType: 'Swing' },
-  { symbol: 'BNB/USDT', market: 'CRYPTO', timeframe: '4H', tradeType: 'Swing' },
-  { symbol: 'XRP/USDT', market: 'CRYPTO', timeframe: '1D', tradeType: 'Swing' },
-  { symbol: 'EUR/USD',  market: 'FOREX',  timeframe: '4H', tradeType: 'Swing' },
-  { symbol: 'GBP/USD',  market: 'FOREX',  timeframe: '4H', tradeType: 'Swing' },
   { symbol: 'XAU/USD',  market: 'METALS', timeframe: '4H', tradeType: 'Swing' },
+  { symbol: 'EUR/USD',  market: 'FOREX',  timeframe: '4H', tradeType: 'Swing' },
 ]
 
 // ─── Intervals ────────────────────────────────────────────────────────────────
+// Kuniga jami ~49 chaqiruv × ~1000 token = ~49,000 token (100k limitdan past)
 
-const SCALP_INTERVAL_MS    = 30 * 60 * 1000   // 30 daqiqa
-const INTRADAY_INTERVAL_MS =  2 * 60 * 60 * 1000   // 2 soat
-const SWING_INTERVAL_MS    =  6 * 60 * 60 * 1000   // 6 soat
+const SCALP_INTERVAL_MS    = 4 * 60 * 60 * 1000   // 4 soat (5 juft × 6 = 30/kun)
+const INTRADAY_INTERVAL_MS = 8 * 60 * 60 * 1000   // 8 soat (5 juft × 3 = 15/kun)
+const SWING_INTERVAL_MS    = 24 * 60 * 60 * 1000  // 24 soat (4 juft × 1 = 4/kun)
 
 const SCALP_DELAY_MS   = 3_000   // 3 sec (scalp orasida)
 const DEFAULT_DELAY_MS = 7_000   // 7 sec (intraday/swing orasida)
@@ -90,11 +82,6 @@ async function analyzeOne(item: WatchItem): Promise<void> {
     }
 
     const expiresAt = new Date(Date.now() + (TF_EXPIRY_MS[item.timeframe] ?? TF_EXPIRY_MS['4H']))
-
-    await prisma.tradingSignal.updateMany({
-      where: { symbol: item.symbol, timeframe: item.timeframe, isActive: true },
-      data:  { isActive: false },
-    })
 
     const smcConcept = Array.isArray(result.concepts) && result.concepts.length > 0
       ? result.concepts[0]
@@ -182,7 +169,7 @@ export function startSignalGenerator(): void {
     return
   }
 
-  logger.info('[SignalGen] Started — Scalp:2min / Intraday:15min / Swing:30min')
+  logger.info('[SignalGen] Started — Scalp:4h / Intraday:8h / Swing:24h')
 
   // Boot delay: 15 sec for scalp, 20 sec for intraday, 25 sec for swing
   setTimeout(() => { runScalp();    timers.push(setInterval(runScalp,    SCALP_INTERVAL_MS))    }, 15_000)

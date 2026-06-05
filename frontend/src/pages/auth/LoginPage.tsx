@@ -57,9 +57,15 @@ export default function LoginPage() {
         setGoogleLoading(false)
       }
     },
-    onError: (err) => {
+    onError: (err: any) => {
       console.error('Google OAuth error:', err)
-      setError('Google login bekor qilindi yoki xatolik yuz berdi.')
+      if (err?.type === 'popup_closed') {
+        setError('Google oynasi yopildi. Qayta urining.')
+      } else if (err?.type === 'popup_failed_to_open') {
+        setError('Popup bloklanган. Brauzeringizda popup ruxsat bering.')
+      } else {
+        setError('Google orqali kirish amalga oshmadi. Google Console da localhost:5173 ruxsat berilganini tekshiring.')
+      }
     },
   })
 

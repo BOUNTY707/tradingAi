@@ -261,7 +261,7 @@ export async function approvePayment(req: AuthRequest, res: Response): Promise<v
 
     // Determine plan duration from planName
     const durationMap: Record<string, number> = {
-      '1 Oylik': 1, '3 Oylik': 3, '12 Oylik': 12,
+      '1 Oylik': 1, '2 Oylik': 2, '12 Oylik': 12,
     }
     const months = durationMap[pr.planName] ?? 1
     const endDate = new Date()
@@ -274,9 +274,9 @@ export async function approvePayment(req: AuthRequest, res: Response): Promise<v
         data: {
           name: 'Pro',
           type: 'PRO',
-          priceMonthly: 100000,
+          priceMonthly: 2777000,
           durationMonths: 1,
-          features: ['Unlimited signals', 'All markets', 'AI analysis'],
+          features: ['Unlimited signals', 'All markets', 'AI analysis', 'Smart Money Concepts', 'Real-time signals'],
         },
       })
     }

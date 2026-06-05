@@ -7,21 +7,46 @@ import LoginRequiredModal from '@/components/payment/LoginRequiredModal'
 
 const plans = [
   {
-    name: '1 Oylik', price: '100 000', period: "so'm", usd: '~$8/oy',
+    name: '1 Oylik', price: '250 000', period: "so'm", usd: '~$20 / oy',
     description: 'Boshlash uchun qulay', duration: '1 oy',
-    features: ['Cheksiz AI signallar', 'Barcha bozorlar', 'Asosiy tahlil', 'Email qo\'llab-quvvatlash'],
+    features: [
+      'Cheksiz AI signallar',
+      'Barcha bozorlar (Crypto · Forex · Metals)',
+      'Smart Money tahlili',
+      'Real vaqt WebSocket signallar',
+      'Portfolio kuzatish',
+      "Email qo'llab-quvvatlash",
+    ],
     cta: 'Boshlash', popular: false, color: '#7c3aed', icon: Star,
   },
   {
-    name: '3 Oylik', price: '250 000', period: "so'm", usd: '~$20 / 3 oy',
-    description: "Ko'pchilik tanlovi", duration: '3 oy',
-    features: ['Cheksiz signallar', 'Crypto + Forex + Stocks', 'Smart Money tahlili', 'AI chat assistant', 'Ustuvor qo\'llab-quvvatlash', 'Kengaytirilgan SMC'],
+    name: '2 Oylik', price: '399 000', period: "so'm", usd: '~$31 / 2 oy',
+    description: "Ko'pchilik tanlovi", duration: '2 oy',
+    features: [
+      'Cheksiz AI signallar',
+      'Barcha bozorlar (Crypto · Forex · Metals)',
+      'Smart Money + Price Action tahlili',
+      'AI trading assistant (chat)',
+      'Grafik tahlili (rasm yuklash)',
+      'Webhook signallar',
+      "Ustuvor qo'llab-quvvatlash 24/7",
+      'Risk menejment vositalari',
+    ],
     cta: 'Pro olish', popular: true, color: '#00f5ff', icon: Zap,
   },
   {
-    name: '12 Oylik', price: '999 000', period: "so'm", usd: '~$80 / yil',
+    name: '12 Oylik', price: '2 777 000', period: "so'm", usd: '~$218 / yil',
     description: 'Maksimal tejamkorlik', duration: '12 oy',
-    features: ['3 Oylikdagi hamma narsa', 'API kirish', 'Webhook signallar', 'Portfolio kuzatish', 'Maxsus AI strategiyalar', 'Shaxsiy menejger'],
+    features: [
+      '2 Oylikdagi hamma narsa',
+      "API kirish (to'liq)",
+      'Maxsus AI trading strategiyalar',
+      'Shaxsiy menejmer',
+      'VIP Telegram guruh',
+      'Yangi funksiyalar birinchi',
+      "Ko'p qurilmada kirish",
+      'Barcha signal sozlamalari',
+    ],
     cta: 'Elite olish', popular: false, color: '#fbbf24', icon: Crown,
   },
 ]

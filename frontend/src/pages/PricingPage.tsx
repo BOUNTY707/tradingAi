@@ -36,15 +36,16 @@ function BankCardLogo() {
 
 // ── Data ───────────────────────────────────────────────────────────
 const plans = [
-  { name: '1 Oylik',  price: '100 000', period: "so'm / oy",   usd: '~$8',  savings: null,         popular: false, description: 'Boshlash uchun qulay',   duration: '1 oy',  amount: 100000, icon: Star,  color: '#7c3aed', cta: 'Boshlash'   },
-  { name: '3 Oylik',  price: '250 000', period: "so'm / 3 oy", usd: '~$20', savings: 'Tejash 17%', popular: true,  description: "Ko'pchilik tanlovi",     duration: '3 oy',  amount: 250000, icon: Zap,   color: '#00f5ff', cta: 'Pro olish'  },
-  { name: '12 Oylik', price: '999 000', period: "so'm / yil",  usd: '~$80', savings: 'Tejash 17%', popular: false, description: 'Maksimal tejamkorlik',   duration: '12 oy', amount: 999000, icon: Crown, color: '#fbbf24', cta: 'Elite olish'},
+  { name: '1 Oylik',  price: '250 000', period: "so'm / oy",   usd: '~$20', savings: null,         popular: false, description: 'Boshlash uchun qulay', duration: '1 oy',  amount: 250000, icon: Star,  color: '#7c3aed', cta: 'Boshlash'   },
+  { name: '2 Oylik',  price: '399 000', period: "so'm / 2 oy", usd: '~$31', savings: 'Tejash 20%', popular: true,  description: "Ko'pchilik tanlovi",   duration: '2 oy',  amount: 399000, icon: Zap,   color: '#00f5ff', cta: 'Pro olish'  },
+  { name: '12 Oylik', price: '2 777 000', period: "so'm / yil",  usd: '~$218', savings: 'Tejash 8%', popular: false, description: 'Maksimal tejamkorlik', duration: '12 oy', amount: 2777000, icon: Crown, color: '#fbbf24', cta: 'Elite olish'},
 ]
 
 const features = [
-  'Cheksiz AI signallar',            'Smart Money tahlili',              'Barcha bozorlar (Crypto · Forex · Stocks)',
-  'AI trading assistant',             'Real vaqt WebSocket signallar',    'Kengaytirilgan SMC tahlili',
-  "Ustuvor qo'llab-quvvatlash",       'API kirish (12 oylik planda)',     'Portfolio kuzatish',
+  'Cheksiz AI signallar',                'Smart Money Concepts tahlili',      'Barcha bozorlar (Crypto · Forex · Metals)',
+  'Real vaqt WebSocket signallar',       'AI trading assistant (chat)',        'Kengaytirilgan SMC + Price Action',
+  'Grafik tahlili (rasm yuklash)',       'Portfolio kuzatish va monitoring',   'Webhook & API kirish (12 oylik)',
+  "Ustuvor qo'llab-quvvatlash 24/7",    'Risk menejment vositalari',          'VIP Telegram va shaxsiy menejmer',
 ]
 
 const DISPLAY_METHODS = [

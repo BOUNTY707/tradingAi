@@ -53,8 +53,15 @@ export default function RegisterPage() {
         setGoogleLoading(false)
       }
     },
-    onError: () => {
-      setError('Google login bekor qilindi yoki xatolik yuz berdi.')
+    onError: (err: any) => {
+      console.error('Google OAuth error:', err)
+      if (err?.type === 'popup_closed') {
+        setError('Google oynasi yopildi. Qayta urining.')
+      } else if (err?.type === 'popup_failed_to_open') {
+        setError('Popup bloklanган. Brauzeringizda popup ruxsat bering.')
+      } else {
+        setError('Google orqali ro\'yxatdan o\'tish amalga oshmadi. Google Console da localhost:5173 ruxsat berilganini tekshiring.')
+      }
     },
   })
 
